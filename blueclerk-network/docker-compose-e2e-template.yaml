@@ -1,0 +1,160 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+version: '2'
+
+volumes:
+  orderer.blueclerk.com:
+  peer0.blueclerk.blueclerk.com:
+  peer1.blueclerk.blueclerk.com:
+  peer0.builders.blueclerk.com:
+  peer1.builders.blueclerk.com:
+  peer0.suppliers.blueclerk.com:
+  peer1.suppliers.blueclerk.com:
+  peer0.serviceProviders.blueclerk.com:
+  peer1.serviceProviders.blueclerk.com:
+
+networks:
+  byfn:
+services:
+  ca0:
+    image: hyperledger/fabric-ca:$IMAGE_TAG
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-blueclerk
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.blueclerk.blueclerk.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA1_PRIVATE_KEY
+    ports:
+      - "7054:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.blueclerk.blueclerk.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA1_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/blueclerk.blueclerk.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerBlueclerk
+    networks:
+      - byfn
+
+  ca1:
+    image: hyperledger/fabric-ca:$IMAGE_TAG
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-builders
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.builders.blueclerk.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA2_PRIVATE_KEY
+    ports:
+      - "8054:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.builders.blueclerk.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA2_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/builders.blueclerk.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerBuilders
+    networks:
+      - byfn
+
+  ca2:
+    image: hyperledger/fabric-ca:$IMAGE_TAG
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-suppliers
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.suppliers.blueclerk.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA3_PRIVATE_KEY
+    ports:
+      - "9054:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.suppliers.blueclerk.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA3_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/suppliers.blueclerk.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerSuppliers
+    networks:
+      - byfn
+
+  ca3:
+    image: hyperledger/fabric-ca:$IMAGE_TAG
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-serviceProviders
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.serviceProviders.blueclerk.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA4_PRIVATE_KEY
+    ports:
+      - "10054:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.serviceProviders.blueclerk.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA4_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/serviceProviders.blueclerk.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerServiceProviders
+    networks:
+      - byfn
+
+  orderer.blueclerk.com:
+    extends:
+      file:   base/docker-compose-base.yaml
+      service: orderer.blueclerk.com
+    container_name: orderer.blueclerk.com
+    networks:
+      - byfn
+
+  peer0.blueclerk.blueclerk.com:
+    container_name: peer0.blueclerk.blueclerk.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.blueclerk.blueclerk.com
+    networks:
+      - byfn
+
+  peer1.blueclerk.blueclerk.com:
+    container_name: peer1.blueclerk.blueclerk.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.blueclerk.blueclerk.com
+    networks:
+      - byfn
+
+  peer0.builders.blueclerk.com:
+    container_name: peer0.builders.blueclerk.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.builders.blueclerk.com
+    networks:
+      - byfn
+
+  peer1.builders.blueclerk.com:
+    container_name: peer1.builders.blueclerk.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.builders.blueclerk.com
+    networks:
+      - byfn
+
+  peer0.suppliers.blueclerk.com:
+    container_name: peer0.suppliers.blueclerk.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.suppliers.blueclerk.com
+    networks:
+      - byfn
+
+  peer1.suppliers.blueclerk.com:
+    container_name: peer1.suppliers.blueclerk.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.suppliers.blueclerk.com
+    networks:
+      - byfn
+
+  peer0.serviceProviders.blueclerk.com:
+    container_name: peer0.serviceProviders.blueclerk.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.serviceProviders.blueclerk.com
+    networks:
+      - byfn
+
+  peer1.serviceProviders.blueclerk.com:
+    container_name: peer1.serviceProviders.blueclerk.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.serviceProviders.blueclerk.com
+    networks:
+      - byfn

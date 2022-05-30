@@ -1,0 +1,16 @@
+{
+	"name": "blueclerk_chaincode",
+	"version": "1.0.0",
+	"description": "blueclerk_chaincode chaincode implemented in node.js",
+	"engines": {
+		"node": ">=8.4.0",
+		"npm": ">=5.3.0"
+	},
+	"scripts": { "start" : "node blueclerk.js" },
+	"engine-strict": true,
+	"license": "Apache-2.0",
+	"dependencies": {
+		"fabric-shim": "~1.4.0",
+    	"joi": "^17.6.0"
+	}
+}
